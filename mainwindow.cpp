@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     if(!QFile::exists("/usr/bin/pactl")) {
         QMessageBox::information(this, "Warning", "Pulse-audio is not installed");
     }
+    connect(ui->activateBtn, SIGNAL(clicked()), SLOT(activateBtnClicked()));
+    connect(ui->deactivateBtn, SIGNAL(clicked()), SLOT(deactivateBtnClicked()));
+
 }
 
 MainWindow::~MainWindow()
@@ -23,12 +26,12 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::activateBtnClicked()
 {
-    ui->label->setText("ENABLED");
-    ui->label->setStyleSheet("border-radius: 120;margin: 20px;background-color:green ;color: rgb(255, 255, 255);text-align:center;font-weight: bold;");
+    ui->soundIndicator->setText("ENABLED");
+    ui->soundIndicator->setStyleSheet("border-radius: 120;margin: 20px;background-color:green ;color: rgb(255, 255, 255);text-align:center;font-weight: bold;");
 
-    QObject *parent;
+    QObject *parent = nullptr;
 
     QString program = "/usr/bin/pactl";
     QStringList arguments;
@@ -39,12 +42,12 @@ void MainWindow::on_pushButton_2_clicked()
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::deactivateBtnClicked()
 {
-    ui->label->setText("DISABLED");
-    ui->label->setStyleSheet("border-radius: 120;margin: 20px;background-color:rgb(170, 0, 0) ;color: rgb(255, 255, 255);text-align:center;font-weight: bold;");
+    ui->soundIndicator->setText("DISABLED");
+    ui->soundIndicator->setStyleSheet("border-radius: 120;margin: 20px;background-color:rgb(170, 0, 0) ;color: rgb(255, 255, 255);text-align:center;font-weight: bold;");
 
-    QObject *parent;
+    QObject *parent = nullptr;
 
     QString program = "/usr/bin/pactl";
     QStringList arguments;
