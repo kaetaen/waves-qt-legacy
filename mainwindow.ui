@@ -6,22 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>324</width>
-    <height>430</height>
+    <width>391</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Waves</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="statusIconLabel">
       <property name="styleSheet">
        <string notr="true">border-radius: 120;margin: 20px;background-color:rgb(170, 0, 0) ;color: rgb(255, 255, 255);text-align:center;font-weight: bold;</string>
       </property>
       <property name="text">
-       <string>DESATIVADO</string>
+       <string>DISABLED</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -29,16 +29,19 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="startBtn">
       <property name="text">
-       <string>Ativar</string>
+       <string>Start</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="stopBtn">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
-       <string>Desativar</string>
+       <string>Stop</string>
       </property>
      </widget>
     </item>

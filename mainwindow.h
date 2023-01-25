@@ -17,25 +17,17 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-
-private slots:
-    void on_pushButton_2_clicked();
-    void on_pushButton_clicked();
-    void closeEvent(QCloseEvent *event)
-    {
-        QObject *parent;
-
-        QString program = "/usr/bin/pactl";
-        QStringList arguments;
-        arguments << "unload-module" << "module-loopback";
-
-        QProcess *myProcess = new QProcess(parent);
-        myProcess->start(program, arguments);
-        event->accept();
-    }
+private Q_SLOTS:
+    void startPulseAudio();
+    void stopPulseAudio();
+    void closeEvent(QCloseEvent*) override;
 
 private:
     Ui::MainWindow *ui;
+    QProcess* m_pulseProcessStart;
+    QProcess* m_pulseProcessStop;
+    QString m_enabledButtonStyle;
+    QString m_disabledButtonStyle;
 
 };
 #endif // MAINWINDOW_H
