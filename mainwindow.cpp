@@ -10,11 +10,34 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setFixedSize(this->geometry().width(),this->geometry().height());
-    this->setWindowTitle("Waves");
+
+    connect(ui->startBtn, &QPushButton::clicked, this, &MainWindow::startPulseAudio);
+    connect(ui->stopBtn, &QPushButton::clicked, this, &MainWindow::stopPulseAudio);
+
     // Verifica se o pulse audio está instalado
     if(!QFile::exists("/usr/bin/pactl")) {
-        QMessageBox::information(this, "Warning", "Pulse-audio is not installed");
+        QMessageBox errorMessage;
+        errorMessage.setIcon(QMessageBox::Critical);
+        errorMessage.setText("Could not find PulseAudioCTL");
+        errorMessage.setWindowTitle("Error");
+        errorMessage.exec();
+        close();
     }
+
+    //For better stylization, consider using QML instead.
+    m_enabledButtonStyle = "border-radius: 120;"
+                           "margin: 20px;"
+                           "background-color:green;"
+                           "color: rgb(255, 255, 255);"
+                           "text-align:center;"
+                           "font-weight: bold;";
+
+    m_disabledButtonStyle = "border-radius: 120;"
+                           "margin: 20px;"
+                           "background-color:green;"
+                           "color: rgb(255, 255, 255);"
+                           "text-align:center;"
+                           "font-weight: bold;";
 }
 
 MainWindow::~MainWindow()
@@ -23,34 +46,50 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::startPulseAudio()
 {
-    ui->label->setText("ENABLED");
-    ui->label->setStyleSheet("border-radius: 120;margin: 20px;background-color:green ;color: rgb(255, 255, 255);text-align:center;font-weight: bold;");
+    ui->statusIconLabel->setText(tr("Enabled"));
+    ui->statusIconLabel->setStyleSheet(m_enabledButtonStyle);
 
-    QObject *parent;
-
+    //consider using the pulseaudio libraries instead
     QString program = "/usr/bin/pactl";
     QStringList arguments;
     arguments << "load-module" << "module-loopback" << "latency_msec=1";
 
-    QProcess *myProcess = new QProcess(parent);
-    myProcess->start(program, arguments);
+    if(!m_pulseProcessStart) {
+        m_pulseProcessStart = new QProcess(this);
+    }
+    m_pulseProcessStart->start(program, arguments);
+    ui->stopBtn->setEnabled(true);
+    ui->startBtn->setEnabled(false);
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::stopPulseAudio()
 {
-    ui->label->setText("DISABLED");
-    ui->label->setStyleSheet("border-radius: 120;margin: 20px;background-color:rgb(170, 0, 0) ;color: rgb(255, 255, 255);text-align:center;font-weight: bold;");
-
-    QObject *parent;
+    ui->statusIconLabel->setText(tr("Disabled"));
+    ui->statusIconLabel->setStyleSheet(m_disabledButtonStyle);
+    m_pulseProcessStart->deleteLater();
 
     QString program = "/usr/bin/pactl";
     QStringList arguments;
     arguments << "unload-module" << "module-loopback";
 
-    QProcess *myProcess = new QProcess(parent);
-    myProcess->start(program, arguments);
+    if(!m_pulseProcessStop){
+        m_pulseProcessStop = new QProcess(this);
+    }
+    m_pulseProcessStop->start(program, arguments);
+    ui->startBtn->setEnabled(true);
+    ui->stopBtn->setEnabled(false);
 }
 
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+//    QString program = "/usr/bin/pactl";
+//    QStringList arguments;
+//    arguments << "unload-module" << "module-loopback";
+
+    stopPulseAudio();
+
+    event->accept();
+}
